@@ -66,7 +66,7 @@ public partial class BoardControl : UserControl
         }
         else
         {
-            System.Diagnostics.Debug.WriteLine("❌ No ViewModel found on load");
+            System.Diagnostics.Debug.WriteLine("❌ No ViewModel found on load - this should not happen in normal operation");
         }
         
         // Initialize file and rank labels
@@ -226,10 +226,69 @@ public partial class BoardControl : UserControl
             }
         }
         
-        // Update game status
+        // Update game status with checkmate/game over detection
         if (GameStatusText != null && ViewModel != null)
         {
-            GameStatusText.Text = ViewModel.GetGameStatus();
+            var gameStatus = ViewModel.GetGameStatus();
+            
+            // Check for game over conditions
+            if (ViewModel.IsGameOver())
+            {
+                var gameResult = ViewModel.GetGameResult();
+                var drawReason = ViewModel.GetDrawReason();
+                
+                if (gameResult == GameResult.WhiteWins)
+                {
+                    if (ViewModel.IsCheckmate())
+                    {
+                        GameStatusText.Text = "🏆 CHECKMATE! WHITE WINS! 🏆";
+                        GameStatusText.Foreground = Brushes.Gold;
+                        GameStatusText.FontWeight = FontWeights.Bold;
+                    }
+                    else
+                    {
+                        GameStatusText.Text = "🏆 WHITE WINS! 🏆";
+                        GameStatusText.Foreground = Brushes.Gold;
+                        GameStatusText.FontWeight = FontWeights.Bold;
+                    }
+                }
+                else if (gameResult == GameResult.BlackWins)
+                {
+                    if (ViewModel.IsCheckmate())
+                    {
+                        GameStatusText.Text = "🏆 CHECKMATE! BLACK WINS! 🏆";
+                        GameStatusText.Foreground = Brushes.Gold;
+                        GameStatusText.FontWeight = FontWeights.Bold;
+                    }
+                    else
+                    {
+                        GameStatusText.Text = "🏆 BLACK WINS! 🏆";
+                        GameStatusText.Foreground = Brushes.Gold;
+                        GameStatusText.FontWeight = FontWeights.Bold;
+                    }
+                }
+                else if (gameResult == GameResult.Draw)
+                {
+                    string drawMessage = drawReason switch
+                    {
+                        DrawReason.Stalemate => "🤝 DRAW - STALEMATE! 🤝",
+                        DrawReason.InsufficientMaterial => "🤝 DRAW - INSUFFICIENT MATERIAL! 🤝",
+                        DrawReason.FiftyMoveRule => "🤝 DRAW - 50 MOVE RULE! 🤝",
+                        DrawReason.ThreefoldRepetition => "🤝 DRAW - REPETITION! 🤝",
+                        _ => "🤝 DRAW! 🤝"
+                    };
+                    GameStatusText.Text = drawMessage;
+                    GameStatusText.Foreground = Brushes.Orange;
+                    GameStatusText.FontWeight = FontWeights.Bold;
+                }
+            }
+            else
+            {
+                // Game ongoing
+                GameStatusText.Text = gameStatus;
+                GameStatusText.Foreground = Brushes.White;
+                GameStatusText.FontWeight = FontWeights.Normal;
+            }
         }
         
         System.Diagnostics.Debug.WriteLine("=== BOARD UPDATE COMPLETE ===");
@@ -387,6 +446,11 @@ public partial class BoardControl : UserControl
             }
         }
         
+        // FORCE: Never use old Board system if we can't find GameState
+        System.Diagnostics.Debug.WriteLine("❌ CRITICAL: Could not find GameState or ViewModel - piece selection disabled");
+        return;
+        
+        // OLD SYSTEM DISABLED - we should never reach here
         if (Board == null) return;
         
         try
@@ -542,6 +606,18 @@ public partial class BoardControl : UserControl
                     _possibleMoves.Clear();
                     UpdateHighlights();
                     this.InvalidateVisual();
+                    
+                    // Check for game over and announce
+                    if (ViewModel.IsGameOver())
+                    {
+                        var result = ViewModel.GetGameResult();
+                        System.Diagnostics.Debug.WriteLine($"🏆 GAME OVER! Result: {result}");
+                        
+                        if (ViewModel.IsCheckmate())
+                        {
+                            System.Diagnostics.Debug.WriteLine("🎯 CHECKMATE DETECTED!");
+                        }
+                    }
                 }
                 else
                 {
@@ -684,6 +760,13 @@ public partial class BoardControl : UserControl
                         _possibleMoves.Clear();
                         UpdateHighlights();
                         this.InvalidateVisual();
+                        
+                        // Check for game over
+                        if (ViewModel.IsGameOver())
+                        {
+                            var result = ViewModel.GetGameResult();
+                            System.Diagnostics.Debug.WriteLine($"🏆 GAME OVER via green dot! Result: {result}");
+                        }
                     }
                     else
                     {

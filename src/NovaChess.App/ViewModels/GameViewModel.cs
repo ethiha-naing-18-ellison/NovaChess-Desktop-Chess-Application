@@ -63,6 +63,10 @@ public partial class GameViewModel : ObservableObject
         System.Diagnostics.Debug.WriteLine($"From: {from} To: {to}");
         System.Diagnostics.Debug.WriteLine($"Current turn: {GameState.SideToMove}");
         
+        // FIXED: Store move number BEFORE making the move
+        var moveNumberBeforeMove = GameState.FullmoveNumber;
+        var playerMoving = GameState.SideToMove;
+        
         var playedMove = _arbiter.TryPlay(GameState, from, to, promotionTo);
         
         if (playedMove != null)
@@ -70,8 +74,8 @@ public partial class GameViewModel : ObservableObject
             System.Diagnostics.Debug.WriteLine($"✅ MOVE SUCCESS: {playedMove}");
             System.Diagnostics.Debug.WriteLine($"New turn: {GameState.SideToMove}");
             
-            // Add to move history
-            AddToMoveHistory(playedMove);
+            // Add to move history with correct move number
+            AddToMoveHistory(playedMove, moveNumberBeforeMove);
             
             // Notify UI of changes
             OnPropertyChanged(nameof(GameState));
@@ -105,12 +109,18 @@ public partial class GameViewModel : ObservableObject
         return _arbiter.LegalMoves(GameState);
     }
     
-    private void AddToMoveHistory(Move move)
+    private void AddToMoveHistory(Move move, int moveNumber)
     {
         // Simple move notation for now
         var moveString = $"{move.From.ToAlgebraic()}-{move.To.ToAlgebraic()}";
-        var moveNumber = GameState!.FullmoveNumber;
-        var isWhiteMove = GameState.SideToMove == CoreColor.Black; // Move was made by the other side
+        
+        // FIXED: Determine who made the move based on the move's color, not current turn
+        var isWhiteMove = move.MovingColor == CoreColor.White;
+        
+        System.Diagnostics.Debug.WriteLine($"📝 Adding to history: Move #{moveNumber}, {(isWhiteMove ? "White" : "Black")}: {moveString}");
+        System.Diagnostics.Debug.WriteLine($"📝 Move.MovingColor = {move.MovingColor}");
+        System.Diagnostics.Debug.WriteLine($"📝 GameState.SideToMove = {GameState.SideToMove}");
+        System.Diagnostics.Debug.WriteLine($"📝 GameState.FullmoveNumber = {GameState.FullmoveNumber}");
         
         // Find or create move list item
         var existingItem = MoveHistory.LastOrDefault(m => m.MoveNumber == moveNumber);
@@ -118,12 +128,26 @@ public partial class GameViewModel : ObservableObject
         {
             existingItem = new MoveListItem { MoveNumber = moveNumber };
             MoveHistory.Add(existingItem);
+            System.Diagnostics.Debug.WriteLine($"📝 Created new move list item #{moveNumber}");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"📝 Using existing move list item #{moveNumber}");
         }
         
         if (isWhiteMove)
+        {
             existingItem.WhiteMove = moveString;
+            System.Diagnostics.Debug.WriteLine($"📝 SET WHITE MOVE: {moveString}");
+        }
         else
+        {
             existingItem.BlackMove = moveString;
+            System.Diagnostics.Debug.WriteLine($"📝 SET BLACK MOVE: {moveString}");
+        }
+        
+        System.Diagnostics.Debug.WriteLine($"📝 Current MoveHistory count: {MoveHistory.Count}");
+        System.Diagnostics.Debug.WriteLine($"📝 Item #{moveNumber}: White='{existingItem.WhiteMove}', Black='{existingItem.BlackMove}'");
     }
     
     /// <summary>
