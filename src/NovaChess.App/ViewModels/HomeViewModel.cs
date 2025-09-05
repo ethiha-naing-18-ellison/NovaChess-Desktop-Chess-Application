@@ -3,6 +3,7 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NovaChess.App.Views;
+using NovaChess.App.Models;
 
 namespace NovaChess.App.ViewModels;
 
@@ -28,13 +29,7 @@ public partial class HomeViewModel : ObservableObject
         try
         {
             var dialog = new NewGameDialog();
-            if (dialog.ShowDialog() == true)
-            {
-                // Navigate to game view with the selected configuration
-                // This will be handled by the MainWindow navigation
-                MessageBox.Show("New game configuration selected! Navigate to Game view to start playing.", 
-                              "New Game", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            dialog.ShowDialog(); // The dialog will handle game start and navigation itself
         }
         catch (System.Exception ex)
         {

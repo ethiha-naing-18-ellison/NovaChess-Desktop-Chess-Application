@@ -1,10 +1,201 @@
 <UserControl x:Class="NovaChess.App.Views.AnalysisView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid>
-        <TextBlock Text="Analysis View - Coming Soon" 
-                   Style="{StaticResource TitleText}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource DarkBackgroundBrush}">
+    
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="400"/>
+        </Grid.ColumnDefinitions>
+        
+        <!-- Main Analysis Area -->
+        <Grid Grid.Column="0" Margin="0,0,20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Header -->
+            <TextBlock Grid.Row="0" Text="🔍 Position Analysis" 
+                       Style="{StaticResource TitleText}"
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,20"/>
+            
+            <!-- FEN Input -->
+            <GroupBox Grid.Row="1" Header="Position Setup" Margin="0,0,0,20"
+                      Foreground="{StaticResource LightTextBrush}"
+                      BorderBrush="{StaticResource AccentBrush}">
+                <StackPanel Margin="15">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="FEN String:" VerticalAlignment="Center" Width="80"
+                                   Foreground="{StaticResource LightTextBrush}"/>
+                        <TextBox Text="{Binding FenString}" Width="400" Height="30" 
+                                 Margin="0,0,10,0"/>
+                        <Button Content="Load" Command="{Binding LoadFenCommand}"
+                                Style="{StaticResource ModernButton}" Height="30" Width="60"/>
+                    </StackPanel>
+                    
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="🏁 Starting Position" Command="{Binding LoadStartingPositionCommand}"
+                                Style="{StaticResource ModernButton}" Height="35" Width="140" Margin="0,0,10,0"/>
+                        <Button Content="🔄 Flip Board" Command="{Binding FlipBoardCommand}"
+                                Style="{StaticResource ModernButton}" Height="35" Width="100" Margin="0,0,10,0"/>
+                        <Button Content="🧠 Analyze" Command="{Binding AnalyzePositionCommand}"
+                                Style="{StaticResource ModernButton}" Height="35" Width="100" Margin="0,0,10,0"/>
+                        <Button Content="🗑️ Clear" Command="{Binding ClearAnalysisCommand}"
+                                Style="{StaticResource ModernButton}" Height="35" Width="80"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+            
+            <!-- Analysis Results -->
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Current Evaluation -->
+                <GroupBox Grid.Row="0" Header="Current Evaluation" Margin="0,0,0,15"
+                          Foreground="{StaticResource LightTextBrush}"
+                          BorderBrush="{StaticResource AccentBrush}">
+                    <StackPanel Margin="15">
+                        <TextBlock Text="{Binding EvaluationText}" 
+                                   FontSize="16" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentBrush}" 
+                                   Margin="0,0,0,10"/>
+                        <TextBlock Text="{Binding BestMoveText}" 
+                                   FontSize="14"
+                                   Foreground="{StaticResource LightTextBrush}"/>
+                        
+                        <!-- Loading indicator -->
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0"
+                                    Visibility="{Binding IsAnalyzing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Text="🤔 Analyzing..." 
+                                       Foreground="{StaticResource AccentBrush}"
+                                       VerticalAlignment="Center"/>
+                            <ProgressBar IsIndeterminate="True" Height="20" Width="200" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                
+                <!-- Detailed Analysis -->
+                <TabControl Grid.Row="1" Background="Transparent">
+                    
+                    <!-- Top Moves Tab -->
+                    <TabItem Header="🎯 Top Moves">
+                        <DataGrid ItemsSource="{Binding TopMoves}" 
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  Background="Transparent"
+                                  Foreground="{StaticResource LightTextBrush}"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Move" Binding="{Binding Move}" Width="100"/>
+                                <DataGridTextColumn Header="Evaluation" Binding="{Binding Evaluation}" Width="100"/>
+                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                    
+                    <!-- Position Notes Tab -->
+                    <TabItem Header="📝 Position Notes">
+                        <ListBox ItemsSource="{Binding PositionNotes}"
+                                 Background="Transparent"
+                                 Foreground="{StaticResource LightTextBrush}"
+                                 BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Margin="5" 
+                                               Foreground="{StaticResource LightTextBrush}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </TabItem>
+                    
+                </TabControl>
+            </Grid>
+        </Grid>
+        
+        <!-- Side Panel -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Analysis Settings -->
+            <GroupBox Grid.Row="0" Header="Analysis Settings" Margin="0,0,0,20"
+                      Foreground="{StaticResource LightTextBrush}"
+                      BorderBrush="{StaticResource AccentBrush}">
+                <StackPanel Margin="15">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                        <TextBlock Text="Analysis Depth:" VerticalAlignment="Center" Width="120"
+                                   Foreground="{StaticResource LightTextBrush}"/>
+                        <Slider Value="{Binding AnalysisDepth}" Minimum="1" Maximum="15" 
+                                Width="120" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding AnalysisDepth}" Width="30" 
+                                   Foreground="{StaticResource AccentBrush}" 
+                                   VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="Game Phase:" VerticalAlignment="Center" Width="120"
+                                   Foreground="{StaticResource LightTextBrush}"/>
+                        <TextBlock Text="{Binding GamePhase}" 
+                                   Foreground="{StaticResource AccentBrush}" 
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+            
+            <!-- Quick Analysis Tips -->
+            <GroupBox Grid.Row="1" Header="💡 Analysis Tips"
+                      Foreground="{StaticResource LightTextBrush}"
+                      BorderBrush="{StaticResource AccentBrush}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="15">
+                        <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Foreground="{StaticResource LightTextBrush}">
+                            <Run Text="🎯 " FontWeight="Bold"/>
+                            <Run Text="Use FEN strings to analyze any position"/>
+                        </TextBlock>
+                        
+                        <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Foreground="{StaticResource LightTextBrush}">
+                            <Run Text="📊 " FontWeight="Bold"/>
+                            <Run Text="Positive scores favor White, negative favor Black"/>
+                        </TextBlock>
+                        
+                        <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Foreground="{StaticResource LightTextBrush}">
+                            <Run Text="⚡ " FontWeight="Bold"/>
+                            <Run Text="Higher analysis depth gives more accurate results"/>
+                        </TextBlock>
+                        
+                        <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Foreground="{StaticResource LightTextBrush}">
+                            <Run Text="🔍 " FontWeight="Bold"/>
+                            <Run Text="Check 'Top Moves' for alternative options"/>
+                        </TextBlock>
+                        
+                        <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Foreground="{StaticResource LightTextBrush}">
+                            <Run Text="📝 " FontWeight="Bold"/>
+                            <Run Text="Position Notes show key characteristics"/>
+                        </TextBlock>
+                        
+                        <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Foreground="{StaticResource LightTextBrush}">
+                            <Run Text="🏁 " FontWeight="Bold"/>
+                            <Run Text="Click 'Starting Position' to reset the board"/>
+                        </TextBlock>
+                    </StackPanel>
+                </ScrollViewer>
+            </GroupBox>
+        </Grid>
     </Grid>
 </UserControl>

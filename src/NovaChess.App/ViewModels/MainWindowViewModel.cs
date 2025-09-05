@@ -21,6 +21,7 @@ public partial class MainWindowViewModel : ObservableObject
     public IRelayCommand NavigateHomeCommand { get; }
     public IRelayCommand NavigateGameCommand { get; }
     public IRelayCommand NavigateAnalysisCommand { get; }
+    public IRelayCommand NavigatePgnLibraryCommand { get; }
     public IRelayCommand NavigateSettingsCommand { get; }
     public IRelayCommand ShowSettingsCommand { get; }
     public IRelayCommand ExitCommand { get; }
@@ -32,6 +33,7 @@ public partial class MainWindowViewModel : ObservableObject
         NavigateHomeCommand = new RelayCommand(() => NavigateToView("Home"));
         NavigateGameCommand = new RelayCommand(() => NavigateToView("Game"));
         NavigateAnalysisCommand = new RelayCommand(() => NavigateToView("Analysis"));
+        NavigatePgnLibraryCommand = new RelayCommand(() => NavigateToView("PgnLibrary"));
         NavigateSettingsCommand = new RelayCommand(() => NavigateToView("Settings"));
         ShowSettingsCommand = new RelayCommand(ShowSettings);
         ExitCommand = new RelayCommand(Exit);
@@ -53,9 +55,18 @@ public partial class MainWindowViewModel : ObservableObject
             "Home" => new HomeView { DataContext = App.Services.GetRequiredService<HomeViewModel>() },
             "Game" => new GameView { DataContext = App.Services.GetRequiredService<GameViewModel>() },
             "Analysis" => new AnalysisView { DataContext = App.Services.GetRequiredService<AnalysisViewModel>() },
+            "PgnLibrary" => new PgnLibraryView { DataContext = App.Services.GetRequiredService<PgnLibraryViewModel>() },
             "Settings" => new SettingsView { DataContext = App.Services.GetRequiredService<SettingsViewModel>() },
             _ => new HomeView { DataContext = App.Services.GetRequiredService<HomeViewModel>() }
         };
+    }
+    
+    /// <summary>
+    /// Public method to navigate to a view (for use by other ViewModels)
+    /// </summary>
+    public void NavigateTo(string viewName)
+    {
+        NavigateToView(viewName);
     }
     
     private void ShowSettings()

@@ -19,12 +19,19 @@ public partial class GameViewModel : ObservableObject
     private readonly IEngineService _engineService;
     private readonly ILogService _logService;
     private readonly Arbiter _arbiter;
+    private ChessAI? _chessAI;
     
     [ObservableProperty]
     private GameState? _gameState;
     
     [ObservableProperty]
     private bool _isGameActive;
+    
+    [ObservableProperty]
+    private GameConfiguration? _gameConfiguration;
+    
+    [ObservableProperty]
+    private bool _isAIThinking;
     
     // Backward compatibility property for UI
     public Board? Board => null; // UI will use GameState instead
@@ -36,20 +43,80 @@ public partial class GameViewModel : ObservableObject
         _engineService = engineService;
         _logService = logService;
         _arbiter = new Arbiter(new ChessMoveGenerator());
+        _chessAI = null; // Will be initialized when starting a PvC game
         
-        // Initialize with starting position
-        InitializeNewGame();
+        // Don't auto-initialize - wait for explicit game start
+        // This prevents overriding configurations set by dialogs
+        System.Diagnostics.Debug.WriteLine("🎮 GameViewModel created - waiting for game configuration");
     }
     
     private void InitializeNewGame()
     {
+        // Default Player vs Player game - only if no game is already active
+        if (GameState == null)
+        {
+            InitializeNewGame(new GameConfiguration { GameMode = GameMode.PlayerVsPlayer });
+        }
+    }
+    
+    /// <summary>
+    /// Ensure a game is initialized (called by UI when needed)
+    /// </summary>
+    public void EnsureGameInitialized()
+    {
+        if (GameState == null)
+        {
+            System.Diagnostics.Debug.WriteLine("🎮 No game found - initializing default Player vs Player");
+            InitializeNewGame();
+        }
+    }
+    
+    public void InitializeNewGame(GameConfiguration config)
+    {
+        GameConfiguration = config;
         GameState = new GameState();
+        
+        System.Diagnostics.Debug.WriteLine($"🎮 InitializeNewGame called with mode: {config.GameMode}");
+        System.Diagnostics.Debug.WriteLine($"🎮 AI Skill: {config.AISkillLevel}, Depth: {config.AISearchDepth}");
+        
+        // Load custom starting position if specified
+        if (!string.IsNullOrEmpty(config.StartingPosition) && 
+            config.StartingPosition != "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+        {
+            try
+            {
+                GameState.LoadFromFen(config.StartingPosition);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load FEN: {ex.Message}");
+                // Fall back to standard position
+                GameState = new GameState();
+            }
+        }
+        
         IsGameActive = true;
+        IsAIThinking = false;
         MoveHistory.Clear();
         
-        System.Diagnostics.Debug.WriteLine("=== NEW CHESS GAME STARTED ===");
+        // Initialize AI if needed
+        if (config.GameMode == GameMode.PlayerVsComputer)
+        {
+            _chessAI = new ChessAI(new ChessMoveGenerator(), config.AISkillLevel, config.AISearchDepth);
+            System.Diagnostics.Debug.WriteLine($"=== AI INITIALIZED: Skill={config.AISkillLevel}, Depth={config.AISearchDepth} ===");
+        }
+        else
+        {
+            _chessAI = null;
+        }
+        
+        System.Diagnostics.Debug.WriteLine($"=== NEW CHESS GAME STARTED: {config.GameMode} ===");
         System.Diagnostics.Debug.WriteLine($"Turn: {GameState.SideToMove}");
         System.Diagnostics.Debug.WriteLine($"Board FEN: {GameState.ToFen()}");
+        
+        // Notify UI
+        OnPropertyChanged(nameof(GameState));
+        OnPropertyChanged(nameof(GameConfiguration));
     }
     
     /// <summary>
@@ -81,6 +148,13 @@ public partial class GameViewModel : ObservableObject
             OnPropertyChanged(nameof(GameState));
             
             _logService.Information($"Move: {playedMove}");
+            
+            // Check if it's AI's turn to move
+            if (ShouldAIMakeMove())
+            {
+                _ = MakeAIMoveAsync(); // Fire and forget
+            }
+            
             return true;
         }
         else
@@ -210,6 +284,79 @@ public partial class GameViewModel : ObservableObject
     {
         if (GameState == null) return DrawReason.None;
         return _arbiter.GetDrawReason(GameState);
+    }
+    
+    /// <summary>
+    /// Check if AI should make a move
+    /// </summary>
+    private bool ShouldAIMakeMove()
+    {
+        return GameConfiguration?.GameMode == GameMode.PlayerVsComputer && 
+               _chessAI != null && 
+               IsGameActive && 
+               !IsAIThinking &&
+               GameState?.SideToMove == CoreColor.Black; // AI plays as Black
+    }
+    
+    /// <summary>
+    /// Make an AI move asynchronously
+    /// </summary>
+    private async Task MakeAIMoveAsync()
+    {
+        if (GameState == null || _chessAI == null || !IsGameActive) return;
+        
+        try
+        {
+            IsAIThinking = true;
+            OnPropertyChanged(nameof(IsAIThinking));
+            
+            System.Diagnostics.Debug.WriteLine("🤖 AI is thinking...");
+            
+            // Add a small delay to show thinking indicator
+            await Task.Delay(500);
+            
+            // Get AI move on background thread
+            var aiMove = await Task.Run(() => _chessAI.GetBestMove(GameState));
+            
+            if (aiMove != null && IsGameActive)
+            {
+                System.Diagnostics.Debug.WriteLine($"🤖 AI selected move: {aiMove}");
+                
+                // Store move number before making the move
+                var moveNumberBeforeMove = GameState.FullmoveNumber;
+                
+                // Apply the AI move using the Arbiter
+                var success = _arbiter.TryPlay(GameState, aiMove);
+                if (!success)
+                {
+                    System.Diagnostics.Debug.WriteLine("🤖 AI move was rejected by Arbiter");
+                    return;
+                }
+                
+                // Add to move history
+                AddToMoveHistory(aiMove, moveNumberBeforeMove);
+                
+                // Notify UI of changes
+                OnPropertyChanged(nameof(GameState));
+                
+                _logService.Information($"AI Move: {aiMove}");
+                System.Diagnostics.Debug.WriteLine($"✅ AI MOVE SUCCESS: {aiMove}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("🤖 AI could not find a move");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ AI ERROR: {ex.Message}");
+            _logService.Error($"AI Error: {ex.Message}");
+        }
+        finally
+        {
+            IsAIThinking = false;
+            OnPropertyChanged(nameof(IsAIThinking));
+        }
     }
     
     /// <summary>

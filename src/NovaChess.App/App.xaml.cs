@@ -51,15 +51,17 @@ public partial class App : Application
                 // Register ViewModels
                 services.AddTransient<MainWindowViewModel>();
                 services.AddTransient<HomeViewModel>();
-                services.AddTransient<GameViewModel>();
+                services.AddSingleton<GameViewModel>();
                 services.AddTransient<AnalysisViewModel>();
                 services.AddTransient<SettingsViewModel>();
+                services.AddTransient<PgnLibraryViewModel>();
                 
                 // Register Views
                 services.AddTransient<HomeView>();
                 services.AddTransient<GameView>();
                 services.AddTransient<AnalysisView>();
                 services.AddTransient<SettingsView>();
+                services.AddTransient<PgnLibraryView>();
             });
     
     public static IServiceProvider Services => _host?.Services ?? 

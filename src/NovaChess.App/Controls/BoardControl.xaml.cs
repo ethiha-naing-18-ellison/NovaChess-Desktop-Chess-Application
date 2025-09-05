@@ -54,8 +54,8 @@ public partial class BoardControl : UserControl
             System.Diagnostics.Debug.WriteLine("✅ Found ViewModel on load");
             if (vm.GameState == null)
             {
-                System.Diagnostics.Debug.WriteLine("🔄 Initializing GameState on load");
-                vm.NewGame();
+                System.Diagnostics.Debug.WriteLine("🔄 Ensuring GameState is initialized on load");
+                vm.EnsureGameInitialized();
             }
             
             if (vm.GameState != null && (GameState == null || ViewModel == null))

@@ -65,11 +65,11 @@
                                        FontWeight="Bold"/>
                         </StackPanel>
                         
-                        <TextBlock x:Name="ThinkingIndicator" Text="AI is thinking..." 
+                        <TextBlock x:Name="ThinkingIndicator" Text="🤖 AI is thinking..." 
                                    Foreground="{StaticResource AccentBrush}" 
                                    FontStyle="Italic" Margin="0,10,0,0"
                                    HorizontalAlignment="Center"
-                                   Visibility="Collapsed"/>
+                                   Visibility="{Binding IsAIThinking, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </StackPanel>
                 </GroupBox>
                 

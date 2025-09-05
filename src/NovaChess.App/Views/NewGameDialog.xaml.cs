@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using NovaChess.Core;
 using NovaChess.App.Models;
+using NovaChess.App.ViewModels;
 
 namespace NovaChess.App.Views;
 
@@ -85,6 +86,10 @@ public partial class NewGameDialog : Window
             }
 
             DialogResult = true;
+            
+            // Trigger game start and navigation
+            StartNewGameWithConfig();
+            
             Close();
         }
         catch (Exception ex)
@@ -97,6 +102,39 @@ public partial class NewGameDialog : Window
     {
         DialogResult = false;
         Close();
+    }
+    
+    private void StartNewGameWithConfig()
+    {
+        try
+        {
+            // Get the GameViewModel and start a new game with the configuration
+            var gameViewModel = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions
+                .GetRequiredService<GameViewModel>(App.Services);
+            
+            gameViewModel.InitializeNewGame(GameConfig);
+            
+            var modeText = GameConfig.GameMode == GameMode.PlayerVsComputer ? 
+                $"Player vs Computer (Skill: {GameConfig.AISkillLevel})" : "Player vs Player";
+                
+            System.Diagnostics.Debug.WriteLine($"🎮 Dialog started new game: {modeText}");
+            
+            // Navigate to game view using the main window's DataContext
+            if (Application.Current.MainWindow?.DataContext is MainWindowViewModel mainViewModel)
+            {
+                System.Diagnostics.Debug.WriteLine("🔄 Dialog navigating to Game view...");
+                mainViewModel.NavigateTo("Game");
+                System.Diagnostics.Debug.WriteLine("✅ Dialog navigation completed");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("❌ Dialog could not find MainWindowViewModel");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ Dialog game start failed: {ex.Message}");
+        }
     }
 
     private bool IsValidFen(string fen)

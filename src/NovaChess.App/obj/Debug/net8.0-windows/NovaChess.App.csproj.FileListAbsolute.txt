@@ -70,4 +70,4 @@ C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.App\obj\Debu
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.App\obj\Debug\net8.0-windows\Controls\BoardControl.g.cs
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.App\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.App\obj\Debug\net8.0-windows\NovaChess.App_MarkupCompile.lref
-C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.App\obj\Debug\net8.0-windows\Views\ChessGameView.g.cs
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.App\obj\Debug\net8.0-windows\NovaChess.App.sourcelink.json

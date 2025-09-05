@@ -12,7 +12,7 @@ TRACE;RELEASE;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.App\App.xaml
 8-241906962
 
-17-1430224465
+18-2012366300
 230393818717
 Controls\BoardControl.xaml;Views\AnalysisView.xaml;Views\GameView.xaml;Views\HomeView.xaml;Views\MainWindow.xaml;Views\NewGameDialog.xaml;Views\PgnLibraryView.xaml;Views\SettingsView.xaml;
 

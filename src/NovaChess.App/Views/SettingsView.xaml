@@ -1,10 +1,133 @@
 <UserControl x:Class="NovaChess.App.Views.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid>
-        <TextBlock Text="Settings View - Coming Soon" 
-                   Style="{StaticResource TitleText}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-    </Grid>
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource DarkBackgroundBrush}">
+    
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="40">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Header -->
+            <TextBlock Grid.Row="0" Text="⚙️ Settings" 
+                       Style="{StaticResource TitleText}"
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,30"/>
+            
+            <!-- Settings Content -->
+            <StackPanel Grid.Row="1">
+                
+                <!-- Player Settings -->
+                <GroupBox Header="Player Settings" Margin="0,0,0,20"
+                          Foreground="{StaticResource LightTextBrush}"
+                          BorderBrush="{StaticResource AccentBrush}">
+                    <StackPanel Margin="15">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="Player Name:" VerticalAlignment="Center" Width="150"
+                                       Foreground="{StaticResource LightTextBrush}"/>
+                            <TextBox Text="{Binding PlayerName}" Width="200" Height="30"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                
+                <!-- Game Settings -->
+                <GroupBox Header="Game Settings" Margin="0,0,0,20"
+                          Foreground="{StaticResource LightTextBrush}"
+                          BorderBrush="{StaticResource AccentBrush}">
+                    <StackPanel Margin="15">
+                        <CheckBox Content="Show Legal Moves" IsChecked="{Binding ShowLegalMoves}" 
+                                  Margin="0,0,0,10" Foreground="{StaticResource LightTextBrush}"/>
+                        <CheckBox Content="Highlight Last Move" IsChecked="{Binding HighlightLastMove}" 
+                                  Margin="0,0,0,10" Foreground="{StaticResource LightTextBrush}"/>
+                        <CheckBox Content="Enable Animations" IsChecked="{Binding AnimationsEnabled}" 
+                                  Margin="0,0,0,10" Foreground="{StaticResource LightTextBrush}"/>
+                        <CheckBox Content="Enable Sound Effects" IsChecked="{Binding SoundEnabled}" 
+                                  Margin="0,0,0,15" Foreground="{StaticResource LightTextBrush}"/>
+                        
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Default Time Control (minutes):" VerticalAlignment="Center" Width="200"
+                                       Foreground="{StaticResource LightTextBrush}"/>
+                            <TextBox Text="{Binding DefaultTimeControlMinutes}" Width="80" Height="30"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Default AI Skill Level:" VerticalAlignment="Center" Width="200"
+                                       Foreground="{StaticResource LightTextBrush}"/>
+                            <Slider Value="{Binding DefaultAISkillLevel}" Minimum="1" Maximum="20" 
+                                    Width="150" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding DefaultAISkillLevel}" Width="30" 
+                                       Foreground="{StaticResource AccentBrush}" 
+                                       VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                
+                <!-- Appearance Settings -->
+                <GroupBox Header="Appearance" Margin="0,0,0,20"
+                          Foreground="{StaticResource LightTextBrush}"
+                          BorderBrush="{StaticResource AccentBrush}">
+                    <StackPanel Margin="15">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="Theme:" VerticalAlignment="Center" Width="150"
+                                       Foreground="{StaticResource LightTextBrush}"/>
+                            <ComboBox ItemsSource="{Binding AvailableThemes}" 
+                                      SelectedItem="{Binding SelectedTheme}" 
+                                      Width="150" Height="30"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="Board Style:" VerticalAlignment="Center" Width="150"
+                                       Foreground="{StaticResource LightTextBrush}"/>
+                            <ComboBox ItemsSource="{Binding AvailableBoardStyles}" 
+                                      SelectedItem="{Binding SelectedBoardStyle}" 
+                                      Width="150" Height="30"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="Piece Set:" VerticalAlignment="Center" Width="150"
+                                       Foreground="{StaticResource LightTextBrush}"/>
+                            <ComboBox ItemsSource="{Binding AvailablePieceSets}" 
+                                      SelectedItem="{Binding SelectedPieceSet}" 
+                                      Width="150" Height="30"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                
+                <!-- File Settings -->
+                <GroupBox Header="File Settings" Margin="0,0,0,20"
+                          Foreground="{StaticResource LightTextBrush}"
+                          BorderBrush="{StaticResource AccentBrush}">
+                    <StackPanel Margin="15">
+                        <CheckBox Content="Auto-save Games" IsChecked="{Binding AutoSaveGames}" 
+                                  Margin="0,0,0,15" Foreground="{StaticResource LightTextBrush}"/>
+                        
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="PGN Export Path:" VerticalAlignment="Center" Width="150"
+                                       Foreground="{StaticResource LightTextBrush}"/>
+                            <TextBox Text="{Binding PgnExportPath}" Width="300" Height="30" 
+                                     IsReadOnly="True" Margin="0,0,10,0"/>
+                            <Button Content="Browse..." Command="{Binding BrowsePgnPathCommand}"
+                                    Style="{StaticResource ModernButton}" Height="30" Width="80"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                
+            </StackPanel>
+            
+            <!-- Action Buttons -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" 
+                        HorizontalAlignment="Center" Margin="0,30,0,0">
+                <Button Content="💾 Save Settings" Command="{Binding SaveSettingsCommand}"
+                        Style="{StaticResource ModernButton}" 
+                        Height="40" Width="150" Margin="0,0,15,0"/>
+                <Button Content="🔄 Reset to Defaults" Command="{Binding ResetSettingsCommand}"
+                        Style="{StaticResource ModernButton}" 
+                        Height="40" Width="150"/>
+            </StackPanel>
+            
+        </Grid>
+    </ScrollViewer>
 </UserControl>

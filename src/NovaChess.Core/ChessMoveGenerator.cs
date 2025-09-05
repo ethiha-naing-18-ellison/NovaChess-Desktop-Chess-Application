@@ -312,9 +312,27 @@ public sealed class ChessMoveGenerator : IMoveGenerator
                 
                 var target = new Square(targetIndex);
                 
-                // Check for board wrap-around
-                if (Math.Abs(target.File - from.File) > distance || Math.Abs(target.Rank - from.Rank) > distance)
+                // Check for board wrap-around and valid movement pattern
+                var fileDiff = Math.Abs(target.File - from.File);
+                var rankDiff = Math.Abs(target.Rank - from.Rank);
+                
+                // Prevent wrapping around board edges
+                if (fileDiff > distance || rankDiff > distance)
                     break;
+                
+                // Additional validation based on offset direction
+                if (offset == -8 || offset == 8) // Vertical movement
+                {
+                    if (fileDiff != 0) break; // File should not change for vertical moves
+                }
+                else if (offset == -1 || offset == 1) // Horizontal movement
+                {
+                    if (rankDiff != 0) break; // Rank should not change for horizontal moves
+                }
+                else // Diagonal movement (offsets: -9, -7, 7, 9)
+                {
+                    if (fileDiff != rankDiff) break; // File and rank changes must be equal for diagonal moves
+                }
                 
                 var targetPiece = state.GetPiece(target);
                 if (targetPiece.IsEmpty)

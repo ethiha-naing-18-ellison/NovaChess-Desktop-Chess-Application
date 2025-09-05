@@ -1,10 +1,224 @@
 <UserControl x:Class="NovaChess.App.Views.PgnLibraryView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid>
-        <TextBlock Text="PGN Library View - Coming Soon" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource DarkBackgroundBrush}">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="📚 PGN Library" 
                    Style="{StaticResource TitleText}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
+                   HorizontalAlignment="Center" 
+                   Margin="0,0,0,20"/>
+        
+        <!-- Toolbar -->
+        <Grid Grid.Row="1" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Search and Actions -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                         Width="300" Height="35" 
+                         VerticalContentAlignment="Center"
+                         Margin="0,0,10,0"/>
+                
+                <Button Content="🔍 Search" Command="{Binding SearchGamesCommand}"
+                        Style="{StaticResource ModernButton}" Height="35" Width="80" Margin="0,0,10,0"/>
+                <Button Content="❌ Clear" Command="{Binding ClearSearchCommand}"
+                        Style="{StaticResource ModernButton}" Height="35" Width="70" Margin="0,0,20,0"/>
+                
+                <Button Content="📁 Open Library" Command="{Binding OpenLibraryFolderCommand}"
+                        Style="{StaticResource ModernButton}" Height="35" Width="120" Margin="0,0,10,0"/>
+                <Button Content="🎲 Samples" Command="{Binding CreateSampleGamesCommand}"
+                        Style="{StaticResource ModernButton}" Height="35" Width="100"/>
+            </StackPanel>
+            
+            <!-- Import/Export Actions -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Content="📥 Import" Command="{Binding ImportPgnCommand}"
+                        Style="{StaticResource ModernButton}" Height="35" Width="80" Margin="0,0,10,0"/>
+                <Button Content="📤 Export" Command="{Binding ExportPgnCommand}"
+                        Style="{StaticResource ModernButton}" Height="35" Width="80" Margin="0,0,10,0"/>
+                <Button Content="🗑️ Delete" Command="{Binding DeleteGameCommand}"
+                        Style="{StaticResource ModernButton}" Height="35" Width="80" Margin="0,0,10,0"/>
+                <Button Content="🔄 Refresh" Command="{Binding RefreshLibraryCommand}"
+                        Style="{StaticResource ModernButton}" Height="35" Width="80"/>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Main Content -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Games List -->
+            <GroupBox Grid.Column="0" Header="Games Library"
+                      Foreground="{StaticResource LightTextBrush}"
+                      BorderBrush="{StaticResource AccentBrush}">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Loading Indicator -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock Text="🔄 Loading games..." 
+                                   Foreground="{StaticResource AccentBrush}"
+                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <ProgressBar IsIndeterminate="True" Height="20" Width="200"/>
+                    </StackPanel>
+                    
+                    <!-- Games DataGrid -->
+                    <DataGrid Grid.Row="0" 
+                              ItemsSource="{Binding FilteredGames}" 
+                              SelectedItem="{Binding SelectedGame}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Background="Transparent"
+                              Foreground="{StaticResource LightTextBrush}"
+                              GridLinesVisibility="Horizontal"
+                              HeadersVisibility="Column"
+                              SelectionMode="Single">
+                        <DataGrid.Style>
+                            <Style TargetType="DataGrid">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Style>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="White" Binding="{Binding White}" Width="120"/>
+                            <DataGridTextColumn Header="Black" Binding="{Binding Black}" Width="120"/>
+                            <DataGridTextColumn Header="Result" Binding="{Binding ResultString}" Width="60"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="90"/>
+                            <DataGridTextColumn Header="Event" Binding="{Binding Event}" Width="*"/>
+                            <DataGridTextColumn Header="Moves" Binding="{Binding MoveCount}" Width="60"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    
+                    <!-- Game Actions -->
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                        <Button Content="🎮 Load Game" Command="{Binding LoadGameCommand}"
+                                Style="{StaticResource ModernButton}" Height="35" Width="100" Margin="0,0,10,0"/>
+                        <Button Content="📋 Copy PGN" 
+                                Click="CopyPgnButton_Click"
+                                Style="{StaticResource ModernButton}" Height="35" Width="100"/>
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+            
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" 
+                          Background="{StaticResource AccentBrush}" Width="3"/>
+            
+            <!-- Game Details -->
+            <GroupBox Grid.Column="2" Header="Game Details"
+                      Foreground="{StaticResource LightTextBrush}"
+                      BorderBrush="{StaticResource AccentBrush}">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Game Info -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                        <TextBlock Text="{Binding SelectedGame.DisplayName}" 
+                                   FontSize="16" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentBrush}" 
+                                   Margin="0,0,0,10"/>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Event:" Width="80" 
+                                       Foreground="{StaticResource LightTextBrush}" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedGame.Event}" 
+                                       Foreground="{StaticResource LightTextBrush}" Margin="0,0,0,5"/>
+                            
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Site:" Width="80" 
+                                       Foreground="{StaticResource LightTextBrush}" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedGame.Site}" 
+                                       Foreground="{StaticResource LightTextBrush}" Margin="0,0,0,5"/>
+                            
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Round:" Width="80" 
+                                       Foreground="{StaticResource LightTextBrush}" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedGame.Round}" 
+                                       Foreground="{StaticResource LightTextBrush}" Margin="0,0,0,5"/>
+                            
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Opening:" Width="80" 
+                                       Foreground="{StaticResource LightTextBrush}" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedGame.Opening}" 
+                                       Foreground="{StaticResource LightTextBrush}" Margin="0,0,0,5"/>
+                            
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Moves:" Width="80" 
+                                       Foreground="{StaticResource LightTextBrush}"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedGame.MoveCount}" 
+                                       Foreground="{StaticResource LightTextBrush}"/>
+                        </Grid>
+                    </StackPanel>
+                    
+                    <!-- PGN Content -->
+                    <GroupBox Grid.Row="1" Header="PGN Content"
+                              Foreground="{StaticResource LightTextBrush}"
+                              BorderBrush="{StaticResource AccentBrush}">
+                        <TextBox Text="{Binding SelectedPgnContent}" 
+                                 IsReadOnly="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas"
+                                 FontSize="12"
+                                 Background="Black"
+                                 Foreground="{StaticResource LightTextBrush}"
+                                 BorderThickness="0"/>
+                    </GroupBox>
+                </Grid>
+            </GroupBox>
+        </Grid>
+        
+        <!-- Status Bar -->
+        <Border Grid.Row="3" Background="{StaticResource AccentBrush}" Height="30" Margin="0,10,0,0">
+            <TextBlock Text="{Binding StatusMessage}" 
+                       Foreground="White" 
+                       VerticalAlignment="Center" 
+                       Margin="10,0"/>
+        </Border>
     </Grid>
 </UserControl>
