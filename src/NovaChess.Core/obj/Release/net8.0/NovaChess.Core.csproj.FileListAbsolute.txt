@@ -1,0 +1,11 @@
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\bin\Release\net8.0\NovaChess.Core.deps.json
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\bin\Release\net8.0\NovaChess.Core.dll
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\bin\Release\net8.0\NovaChess.Core.pdb
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Release\net8.0\NovaChess.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Release\net8.0\NovaChess.Core.AssemblyInfoInputs.cache
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Release\net8.0\NovaChess.Core.AssemblyInfo.cs
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Release\net8.0\NovaChess.Core.csproj.CoreCompileInputs.cache
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Release\net8.0\NovaChess.Core.dll
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Release\net8.0\refint\NovaChess.Core.dll
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Release\net8.0\NovaChess.Core.pdb
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Release\net8.0\ref\NovaChess.Core.dll

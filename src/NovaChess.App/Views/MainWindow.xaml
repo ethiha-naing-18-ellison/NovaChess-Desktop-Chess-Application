@@ -1,0 +1,111 @@
+<Window x:Class="NovaChess.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Nova ✦ Chess – Desktop" Height="800" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource DarkBackgroundBrush}"
+        MinHeight="600" MinWidth="800">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <!-- Navigation Sidebar -->
+        <Border Grid.Column="0" Background="{StaticResource DarkPanelBrush}" 
+                BorderBrush="{StaticResource AccentBrush}" BorderThickness="0,0,1,0">
+            <StackPanel Margin="20">
+                <!-- App Logo/Title -->
+                <StackPanel Margin="0,0,0,30" HorizontalAlignment="Center">
+                    <TextBlock Text="♔" FontSize="48" HorizontalAlignment="Center" 
+                               Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="Nova Chess" FontSize="20" FontWeight="Bold" 
+                               HorizontalAlignment="Center" Margin="0,5,0,0"
+                               Foreground="{StaticResource LightTextBrush}"/>
+                    <TextBlock Text="Desktop" FontSize="12" HorizontalAlignment="Center" 
+                               Foreground="{StaticResource AccentBrush}"/>
+                </StackPanel>
+                
+                <!-- Navigation Buttons -->
+                <Button Content="🏠 Home" Command="{Binding NavigateHomeCommand}"
+                        Style="{StaticResource ModernButton}" Height="45" Margin="0,0,0,10"
+                        HorizontalAlignment="Stretch"/>
+                
+                <Button Content="♟ Game" Command="{Binding NavigateGameCommand}"
+                        Style="{StaticResource ModernButton}" Height="45" Margin="0,0,0,10"
+                        HorizontalAlignment="Stretch"/>
+                
+                <Button Content="♗ Analysis" Command="{Binding NavigateAnalysisCommand}"
+                        Style="{StaticResource ModernButton}" Height="45" Margin="0,0,0,10"
+                        HorizontalAlignment="Stretch"/>
+                
+                <Button Content="📚 PGN Library" 
+                        Style="{StaticResource ModernButton}" Height="45" Margin="0,0,0,10"
+                        HorizontalAlignment="Stretch"/>
+                
+                <Button Content="⚙️ Settings" Command="{Binding ShowSettingsCommand}"
+                        Style="{StaticResource ModernButton}" Height="45" Margin="0,0,0,10"
+                        HorizontalAlignment="Stretch"/>
+                
+                <!-- Divider -->
+                <Separator Margin="0,20,0,20" Background="{StaticResource AccentBrush}"/>
+                
+                <!-- Recent Games -->
+                <TextBlock Text="Recent Games" FontSize="14" FontWeight="Bold" 
+                           Foreground="{StaticResource LightTextBrush}" Margin="0,0,0,10"/>
+                
+                <ItemsControl ItemsSource="{Binding RecentGames}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding Title}" 
+                                    Command="{Binding DataContext.LoadGameCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource ModernButton}" Height="35" Margin="0,0,0,5"
+                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                    Padding="10,0">
+                                <Button.ToolTip>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Date}"/>
+                                        <TextBlock Text="{Binding Result}"/>
+                                    </StackPanel>
+                                </Button.ToolTip>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+                <!-- Spacer -->
+                <Separator Margin="0,20,0,20" Background="{StaticResource AccentBrush}"/>
+                
+                <!-- Exit Button -->
+                <Button Content="❌ Exit" Command="{Binding ExitCommand}"
+                        Style="{StaticResource ModernButton}" Height="45"
+                        HorizontalAlignment="Stretch"/>
+            </StackPanel>
+        </Border>
+        
+        <!-- Main Content Area -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Content Header -->
+            <Border Grid.Row="0" Background="{StaticResource DarkPanelBrush}" 
+                    BorderBrush="{StaticResource AccentBrush}" BorderThickness="0,0,0,1">
+                <StackPanel Orientation="Horizontal" Margin="20,15">
+                    <TextBlock Text="{Binding CurrentViewTitle}" FontSize="24" FontWeight="Bold" 
+                               Foreground="{StaticResource LightTextBrush}"/>
+                    <TextBlock Text=" - Nova Chess" FontSize="16" 
+                               Foreground="{StaticResource AccentBrush}" 
+                               VerticalAlignment="Bottom" Margin="10,0,0,2"/>
+                </StackPanel>
+            </Border>
+            
+            <!-- Content -->
+            <ContentControl Grid.Row="1" Content="{Binding CurrentView}" Margin="20"/>
+        </Grid>
+    </Grid>
+</Window>

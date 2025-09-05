@@ -1,0 +1,114 @@
+<UserControl x:Class="NovaChess.App.Views.GameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:NovaChess.App.Controls"
+             Background="{StaticResource DarkBackgroundBrush}">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header with game controls -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+            <Button Content="New Game" Command="{Binding NewGameCommand}" 
+                    Style="{StaticResource ModernButton}" Width="100" Height="30" Margin="0,0,10,0"/>
+            <Button Content="Undo" Command="{Binding UndoMoveCommand}" 
+                    Style="{StaticResource ModernButton}" Width="80" Height="30" Margin="0,0,10,0"/>
+            <Button Content="Redo" Command="{Binding RedoMoveCommand}" 
+                    Style="{StaticResource ModernButton}" Width="80" Height="30" Margin="0,0,10,0"/>
+            <Button Content="Resign" Command="{Binding ResignCommand}" 
+                    Style="{StaticResource ModernButton}" Width="80" Height="30" Margin="0,0,10,0"/>
+            <Button Content="Draw Offer" Command="{Binding DrawOfferCommand}" 
+                    Style="{StaticResource ModernButton}" Width="100" Height="30" Margin="0,0,10,0"/>
+        </StackPanel>
+        
+        <!-- Main game area -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Chess board -->
+            <controls:BoardControl x:Name="BoardControl" 
+                                   Grid.Column="0"
+                                   Margin="0,0,20,0"/>
+            
+            <!-- Game info panel -->
+            <StackPanel Grid.Column="1" Width="250" VerticalAlignment="Top">
+                <!-- Game status -->
+                <GroupBox Header="Game Status" Margin="0,0,0,20"
+                          Foreground="{StaticResource LightTextBrush}"
+                          BorderBrush="{StaticResource AccentBrush}">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="{Binding GameStatus}" 
+                                   Foreground="{StaticResource LightTextBrush}"
+                                   FontSize="16" FontWeight="Bold" 
+                                   HorizontalAlignment="Center" Margin="0,5"/>
+                        
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBlock Text="White:" Foreground="{StaticResource LightTextBrush}" 
+                                       FontWeight="Bold" Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding WhiteTime}" 
+                                       Foreground="{StaticResource AccentBrush}" 
+                                       FontWeight="Bold"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <TextBlock Text="Black:" Foreground="{StaticResource LightTextBrush}" 
+                                       FontWeight="Bold" Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding BlackTime}" 
+                                       Foreground="{StaticResource AccentBrush}" 
+                                       FontWeight="Bold"/>
+                        </StackPanel>
+                        
+                        <TextBlock x:Name="ThinkingIndicator" Text="AI is thinking..." 
+                                   Foreground="{StaticResource AccentBrush}" 
+                                   FontStyle="Italic" Margin="0,10,0,0"
+                                   HorizontalAlignment="Center"
+                                   Visibility="Collapsed"/>
+                    </StackPanel>
+                </GroupBox>
+                
+                <!-- Move history -->
+                <GroupBox Header="Move History" 
+                          Foreground="{StaticResource LightTextBrush}"
+                          BorderBrush="{StaticResource AccentBrush}">
+                    <ScrollViewer Height="300" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding MoveHistory}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding MoveNumber}" 
+                                                   Foreground="{StaticResource AccentBrush}" 
+                                                   FontWeight="Bold" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding WhiteMove}" 
+                                                   Foreground="{StaticResource LightTextBrush}" 
+                                                   Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding BlackMove}" 
+                                                   Foreground="{StaticResource LightTextBrush}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </GroupBox>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Footer with additional info -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <TextBlock Text="Nova Chess - Desktop" 
+                       Foreground="{StaticResource LightTextBrush}" 
+                       FontSize="12" Opacity="0.7"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

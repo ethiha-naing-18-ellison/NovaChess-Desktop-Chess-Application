@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "CMIgGuc/JIw=",
+  "success": true,
+  "projectFilePath": "C:\\xampp\\htdocs\\NovaChess-Desktop-Chess-Application-1\\src\\NovaChess.Infrastructure\\NovaChess.Infrastructure.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\TUF\\.nuget\\packages\\serilog\\3.1.1\\serilog.3.1.1.nupkg.sha512",
+    "C:\\Users\\TUF\\.nuget\\packages\\serilog.sinks.file\\5.0.0\\serilog.sinks.file.5.0.0.nupkg.sha512",
+    "C:\\Users\\TUF\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
+    "C:\\Users\\TUF\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

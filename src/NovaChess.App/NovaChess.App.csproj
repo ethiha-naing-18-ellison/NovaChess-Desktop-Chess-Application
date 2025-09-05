@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <AssemblyTitle>Nova Chess - Desktop</AssemblyTitle>
+    <AssemblyDescription>A production-ready Windows desktop Chess application</AssemblyDescription>
+    <AssemblyCompany>Nova Chess</AssemblyCompany>
+    <AssemblyProduct>Nova Chess Desktop</AssemblyProduct>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NovaChess.Core\NovaChess.Core.csproj" />
+    <ProjectReference Include="..\NovaChess.Infrastructure\NovaChess.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="assets\**\*" />
+  </ItemGroup>
+
+</Project>
