@@ -13,3 +13,4 @@ C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Infrastructu
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Infrastructure\obj\Debug\net8.0\refint\NovaChess.Infrastructure.dll
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Infrastructure\obj\Debug\net8.0\NovaChess.Infrastructure.pdb
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Infrastructure\obj\Debug\net8.0\ref\NovaChess.Infrastructure.dll
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Infrastructure\obj\Debug\net8.0\NovaChess.Infrastructure.sourcelink.json

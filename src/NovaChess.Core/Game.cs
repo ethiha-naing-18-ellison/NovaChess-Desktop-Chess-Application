@@ -3,7 +3,7 @@ namespace NovaChess.Core;
 public class Game
 {
     private readonly Board _board;
-    private readonly MoveGenerator _moveGenerator;
+    private readonly Arbiter _arbiter;
     private readonly List<Move> _moveHistory = new();
     private readonly List<ulong> _positionHistory = new(); // Zobrist hashes for repetition detection
     
@@ -17,7 +17,7 @@ public class Game
     public Game()
     {
         _board = new Board();
-        _moveGenerator = new MoveGenerator(_board);
+        _arbiter = new Arbiter();
         _positionHistory.Add(_board.ZobristHash);
     }
     
@@ -30,7 +30,8 @@ public class Game
     
     public List<Move> GetLegalMoves()
     {
-        return _moveGenerator.GenerateLegalMoves();
+        // TODO: Implement with new Arbiter and GameState
+        return new List<Move>(); // _arbiter.LegalMoves(gameState);
     }
     
     public List<Move> GetLegalMovesFrom(Square square)
@@ -78,11 +79,11 @@ public class Game
         _board.SetPiece(move.From, PieceType.None, PieceColor.White);
         
         // Place piece at destination (or promotion piece)
-        var targetPiece = move.PromotionPiece != PieceType.None ? move.PromotionPiece : piece;
+        var targetPiece = move.PromotionTo != PieceType.None ? move.PromotionTo : piece;
         _board.SetPiece(move.To, targetPiece, color);
         
         // Handle special moves
-        if (move.IsCastle)
+        if (move.IsCastling)
         {
             ExecuteCastle(move, color);
         }

@@ -9,3 +9,4 @@ C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Deb
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Debug\net8.0\refint\NovaChess.Core.dll
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Debug\net8.0\NovaChess.Core.pdb
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Debug\net8.0\ref\NovaChess.Core.dll
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Core\obj\Debug\net8.0\NovaChess.Core.sourcelink.json

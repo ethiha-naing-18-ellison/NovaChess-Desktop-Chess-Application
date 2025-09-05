@@ -1,10 +1,12 @@
 namespace NovaChess.Core;
 
-public class MoveGenerator
+// Temporarily disabled old move generator
+/*
+public class OldMoveGenerator
 {
     private readonly Board _board;
     
-    public MoveGenerator(Board board)
+    public OldMoveGenerator(Board board)
     {
         _board = board;
     }
@@ -323,3 +325,4 @@ public class MoveGenerator
         return true;
     }
 }
+*/

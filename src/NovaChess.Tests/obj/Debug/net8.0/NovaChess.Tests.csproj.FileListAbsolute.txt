@@ -108,3 +108,4 @@ C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Tests\obj\De
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Tests\obj\Debug\net8.0\NovaChess.Tests.pdb
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Tests\obj\Debug\net8.0\NovaChess.Tests.genruntimeconfig.cache
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Tests\obj\Debug\net8.0\ref\NovaChess.Tests.dll
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.Tests\obj\Debug\net8.0\NovaChess.Tests.sourcelink.json

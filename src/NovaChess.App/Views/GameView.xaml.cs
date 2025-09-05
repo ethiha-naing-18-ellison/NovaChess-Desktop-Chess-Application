@@ -21,27 +21,59 @@ public partial class GameView : UserControl
     {
         if (e.NewValue is ViewModels.GameViewModel viewModel)
         {
-            // Initialize the board control with the current board state
+            // CRITICAL: Initialize with new chess engine first
+            if (viewModel.GameState != null)
+            {
+                BoardControl.SetGameState(viewModel.GameState, viewModel);
+                System.Diagnostics.Debug.WriteLine("=== BOARDCONTROL INITIALIZED WITH GAMESTATE ===");
+            }
+            else
+            {
+                // Initialize new game if no GameState
+                viewModel.NewGame();
+                if (viewModel.GameState != null)
+                {
+                    BoardControl.SetGameState(viewModel.GameState, viewModel);
+                    System.Diagnostics.Debug.WriteLine("=== BOARDCONTROL INITIALIZED WITH NEW GAMESTATE ===");
+                }
+            }
+            
+            // Fallback to old Board system
             if (viewModel.Board != null)
             {
                 BoardControl.SetBoard(viewModel.Board);
             }
             
-            // Subscribe to board changes
+            // Subscribe to board and game state changes
             viewModel.PropertyChanged += (s, args) =>
             {
                 if (args.PropertyName == nameof(viewModel.Board) && viewModel.Board != null)
                 {
                     BoardControl.SetBoard(viewModel.Board);
                 }
+                else if (args.PropertyName == nameof(viewModel.GameState) && viewModel.GameState != null)
+                {
+                    // NEW: Use the new GameState with proper chess engine
+                    BoardControl.SetGameState(viewModel.GameState, viewModel);
+                    System.Diagnostics.Debug.WriteLine("Updated BoardControl with new GameState");
+                }
             };
+            
+            // Initialize with current GameState if available
+            if (viewModel.GameState != null)
+            {
+                BoardControl.SetGameState(viewModel.GameState, viewModel);
+            }
+            
+            // IMPORTANT: Set DataContext so BoardControl can auto-detect ViewModel
+            BoardControl.DataContext = viewModel;
         }
     }
     
     private async void OnMoveMade(object? sender, MoveMadeEventArgs e)
     {
         System.Diagnostics.Debug.WriteLine($"GameView.OnMoveMade called with move: {e.Move}");
-        System.Diagnostics.Debug.WriteLine($"Move from: {e.Move.From}, to: {e.Move.To}, piece: {e.Move.Piece}");
+        System.Diagnostics.Debug.WriteLine($"Move from: {e.Move.From}, to: {e.Move.To}");
         
         if (DataContext is ViewModels.GameViewModel viewModel)
         {

@@ -7,7 +7,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using NovaChess.Core;
+using CoreColor = NovaChess.Core.Color;
+using MediaColor = System.Windows.Media.Color;
 using NovaChess.App.Models;
+using NovaChess.App.ViewModels;
 
 namespace NovaChess.App.Controls;
 
@@ -21,16 +24,50 @@ public partial class BoardControl : UserControl
     private Square? _selectedSquare;
     private Square? _lastMoveFrom;
     private Square? _lastMoveTo;
-    private List<Square> _possibleMoves = new();
+    private HashSet<Square> _possibleMoves = new();
     
     public event EventHandler<MoveMadeEventArgs>? MoveMade;
     
     public Board? Board { get; private set; }
+    public GameState? GameState { get; private set; }
+    public GameViewModel? ViewModel { get; private set; }
     
     public BoardControl()
     {
         InitializeComponent();
         InitializeBoard();
+        
+        // Add loaded event to ensure GameState is available
+        this.Loaded += BoardControl_Loaded;
+    }
+    
+    private void BoardControl_Loaded(object sender, RoutedEventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine("=== BOARDCONTROL LOADED ===");
+        
+        // Try to get ViewModel from DataContext hierarchy
+        var vm = this.DataContext as ViewModels.GameViewModel ??
+                 (this.Parent as FrameworkElement)?.DataContext as ViewModels.GameViewModel;
+        
+        if (vm != null)
+        {
+            System.Diagnostics.Debug.WriteLine("✅ Found ViewModel on load");
+            if (vm.GameState == null)
+            {
+                System.Diagnostics.Debug.WriteLine("🔄 Initializing GameState on load");
+                vm.NewGame();
+            }
+            
+            if (vm.GameState != null && (GameState == null || ViewModel == null))
+            {
+                System.Diagnostics.Debug.WriteLine("✅ Setting up GameState on load");
+                SetGameState(vm.GameState, vm);
+            }
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("❌ No ViewModel found on load");
+        }
         
         // Initialize file and rank labels
         FileLabels.ItemsSource = new[] { "a", "b", "c", "d", "e", "f", "g", "h" };
@@ -81,8 +118,8 @@ public partial class BoardControl : UserControl
         var rect = new Rectangle
         {
             Fill = square.IsLightSquare ? 
-                new SolidColorBrush(Color.FromRgb(240, 217, 181)) : 
-                new SolidColorBrush(Color.FromRgb(181, 136, 99)),
+                new SolidColorBrush(MediaColor.FromRgb(240, 217, 181)) : 
+                new SolidColorBrush(MediaColor.FromRgb(181, 136, 99)),
             Stroke = Brushes.Black,
             StrokeThickness = 1,
             IsHitTestVisible = true, // Ensure the rectangle can receive mouse events
@@ -125,13 +162,13 @@ public partial class BoardControl : UserControl
     {
         var indicator = new Ellipse
         {
-            Width = 30,
-            Height = 30,
-            Fill = new SolidColorBrush(Color.FromArgb(180, 0, 255, 0)), // More opaque green
+            Width = 50,
+            Height = 50,
+            Fill = new SolidColorBrush(MediaColor.FromArgb(180, 0, 255, 0)), // More opaque green
             Stroke = Brushes.DarkGreen,
             StrokeThickness = 3,
             IsHitTestVisible = true, // Make it clickable
-            Visibility = Visibility.Visible, // Make them always visible for testing
+            Visibility = Visibility.Hidden, // Hidden by default, shown when piece selected
             Cursor = Cursors.Hand, // Show hand cursor when hovering
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center
@@ -148,6 +185,54 @@ public partial class BoardControl : UserControl
         Board = board;
         UpdateBoard();
         UpdateGameStatus();
+    }
+    
+    /// <summary>
+    /// NEW: Set the GameState and ViewModel for the new engine
+    /// </summary>
+    public void SetGameState(GameState gameState, GameViewModel viewModel)
+    {
+        GameState = gameState;
+        ViewModel = viewModel;
+        UpdateBoardFromGameState();
+        UpdateGameStatus();
+    }
+    
+    private void UpdateBoardFromGameState()
+    {
+        if (GameState == null) return;
+        
+        System.Diagnostics.Debug.WriteLine("=== UPDATING BOARD FROM GAMESTATE ===");
+        
+        // Update all piece positions from GameState
+        for (int i = 0; i < 64; i++)
+        {
+            var square = new Square(i);
+            var piece = GameState.GetPiece(square);
+            
+            if (_pieces.ContainsKey(square))
+            {
+                var textBlock = _pieces[square];
+                if (piece.IsEmpty)
+                {
+                    textBlock.Text = "";
+                }
+                else
+                {
+                    textBlock.Text = GetPieceSymbol(piece.Type);
+                    textBlock.Foreground = piece.IsWhite ? Brushes.White : Brushes.Black;
+                    System.Diagnostics.Debug.WriteLine($"Set {square.ToAlgebraic()}: {piece}");
+                }
+            }
+        }
+        
+        // Update game status
+        if (GameStatusText != null && ViewModel != null)
+        {
+            GameStatusText.Text = ViewModel.GetGameStatus();
+        }
+        
+        System.Diagnostics.Debug.WriteLine("=== BOARD UPDATE COMPLETE ===");
     }
     
     public void UpdateBoard()
@@ -249,6 +334,59 @@ public partial class BoardControl : UserControl
     
     private void OnSquareMouseDown(object sender, MouseButtonEventArgs e)
     {
+        System.Diagnostics.Debug.WriteLine("=== SQUARE CLICKED - CHECKING GAMESTATE ===");
+        System.Diagnostics.Debug.WriteLine($"GameState is null: {GameState == null}");
+        System.Diagnostics.Debug.WriteLine($"ViewModel is null: {ViewModel == null}");
+        
+        // ALWAYS use new GameState if available
+        if (GameState != null && ViewModel != null)
+        {
+            System.Diagnostics.Debug.WriteLine("✅ Using existing GameState");
+            HandleSquareClickWithNewEngine(sender, e);
+            return;
+        }
+        
+        // Try to get GameState from DataContext if not set directly
+        if (this.DataContext is ViewModels.GameViewModel vm)
+        {
+            System.Diagnostics.Debug.WriteLine($"Found ViewModel in DataContext, GameState is null: {vm.GameState == null}");
+            if (vm.GameState == null)
+            {
+                System.Diagnostics.Debug.WriteLine("🔄 Initializing new game...");
+                vm.NewGame();
+            }
+            
+            if (vm.GameState != null)
+            {
+                System.Diagnostics.Debug.WriteLine("✅ Setting GameState from DataContext");
+                GameState = vm.GameState;
+                ViewModel = vm;
+                UpdateBoardFromGameState(); // Force update display
+                HandleSquareClickWithNewEngine(sender, e);
+                return;
+            }
+        }
+        
+        // Try parent's DataContext
+        if (this.Parent is FrameworkElement parent && parent.DataContext is ViewModels.GameViewModel parentVm)
+        {
+            System.Diagnostics.Debug.WriteLine("🔍 Checking parent DataContext...");
+            if (parentVm.GameState == null)
+            {
+                parentVm.NewGame();
+            }
+            
+            if (parentVm.GameState != null)
+            {
+                System.Diagnostics.Debug.WriteLine("✅ Setting GameState from parent DataContext");
+                GameState = parentVm.GameState;
+                ViewModel = parentVm;
+                UpdateBoardFromGameState();
+                HandleSquareClickWithNewEngine(sender, e);
+                return;
+            }
+        }
+        
         if (Board == null) return;
         
         try
@@ -326,8 +464,9 @@ public partial class BoardControl : UserControl
             if (pieceType != PieceType.None)
             {
                 _selectedSquare = square.Value;
-                _possibleMoves = CalculateRealisticMoves(square.Value, pieceType, pieceColor);
-                System.Diagnostics.Debug.WriteLine($"Selected {pieceColor} {pieceType} with {_possibleMoves.Count} realistic moves");
+                _possibleMoves = CalculateRealisticMoves(square.Value, pieceType, pieceColor).ToHashSet();
+                System.Diagnostics.Debug.WriteLine($"⚠️  USING OLD SYSTEM: Selected {pieceColor} {pieceType} with {_possibleMoves.Count} realistic moves");
+                System.Diagnostics.Debug.WriteLine($"Old system move destinations: {string.Join(", ", _possibleMoves.Select(s => s.ToAlgebraic()))}");
                 UpdateHighlights();
             }
             else
@@ -340,6 +479,110 @@ public partial class BoardControl : UserControl
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+        }
+    }
+    
+    /// <summary>
+    /// NEW: Handle square clicks using the new chess engine
+    /// </summary>
+    private void HandleSquareClickWithNewEngine(object sender, MouseButtonEventArgs e)
+    {
+        if (GameState == null || ViewModel == null) return;
+        
+        try
+        {
+            System.Diagnostics.Debug.WriteLine("=== NEW ENGINE: SQUARE CLICKED ===");
+            
+            var square = GetSquareFromElement(sender as FrameworkElement);
+            if (!square.HasValue)
+            {
+                System.Diagnostics.Debug.WriteLine("No valid square found");
+                return;
+            }
+            
+            System.Diagnostics.Debug.WriteLine($"Clicked square: {square.Value}");
+            
+            var clickedPiece = GameState.GetPiece(square.Value);
+            var currentPlayer = GameState.SideToMove;
+            
+            // Check if clicked square has a piece of the current player
+            bool isOwnPiece = !clickedPiece.IsEmpty && 
+                            ((currentPlayer == NovaChess.Core.Color.White && clickedPiece.IsWhite) || 
+                             (currentPlayer == NovaChess.Core.Color.Black && clickedPiece.IsBlack));
+            
+            // If we have a piece selected
+            if (_selectedSquare.HasValue)
+            {
+                // If clicking on own piece, change selection to that piece
+                if (isOwnPiece)
+                {
+                    System.Diagnostics.Debug.WriteLine($"🔄 CHANGING SELECTION: {_selectedSquare.Value} -> {square.Value}");
+                    
+                    // Select the new piece
+                    _selectedSquare = square.Value;
+                    var legalMoves = ViewModel.GetLegalMovesFrom(square.Value);
+                    _possibleMoves = legalMoves.Select(m => m.To).ToHashSet();
+                    
+                    System.Diagnostics.Debug.WriteLine($"New piece selected: {clickedPiece}, Legal moves: {_possibleMoves.Count}");
+                    UpdateHighlights();
+                    return;
+                }
+                
+                // Otherwise, try to move to the clicked square
+                System.Diagnostics.Debug.WriteLine($"Attempting move: {_selectedSquare.Value} -> {square.Value}");
+                
+                bool moveSuccessful = ViewModel.TryMakeMove(_selectedSquare.Value, square.Value);
+                
+                if (moveSuccessful)
+                {
+                    System.Diagnostics.Debug.WriteLine("✅ MOVE SUCCESSFUL!");
+                    
+                    UpdateBoardFromGameState();
+                    _selectedSquare = null;
+                    _possibleMoves.Clear();
+                    UpdateHighlights();
+                    this.InvalidateVisual();
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("❌ MOVE REJECTED");
+                    // Keep current selection - user can try another move or select different piece
+                }
+            }
+            else
+            {
+                // Select a piece
+                var piece = GameState.GetPiece(square.Value);
+                System.Diagnostics.Debug.WriteLine($"Piece at {square.Value}: {piece.Type} ({piece.Color})");
+                System.Diagnostics.Debug.WriteLine($"Current turn: {GameState.SideToMove}");
+                
+                // Only allow selecting pieces of the current player
+                if (!piece.IsEmpty && piece.Color == GameState.SideToMove)
+                {
+                    _selectedSquare = square.Value;
+                    
+                    // Get legal moves using the new engine
+                    var legalMoves = ViewModel.GetLegalMovesFrom(square.Value);
+                    _possibleMoves = legalMoves.Select(m => m.To).ToHashSet();
+                    
+                    System.Diagnostics.Debug.WriteLine($"Selected {piece.Color} {piece.Type} with {_possibleMoves.Count} legal moves");
+                    System.Diagnostics.Debug.WriteLine($"Legal move destinations: {string.Join(", ", _possibleMoves.Select(s => s.ToAlgebraic()))}");
+                    System.Diagnostics.Debug.WriteLine($"Using NEW ENGINE - GameState and ViewModel are available");
+                    UpdateHighlights();
+                }
+                else if (!piece.IsEmpty)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Cannot select {piece.Color} piece - it's {GameState.SideToMove}'s turn!");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Empty square clicked");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error in HandleSquareClickWithNewEngine: {ex.Message}");
         }
     }
     
@@ -367,7 +610,7 @@ public partial class BoardControl : UserControl
                 {
                     // Try to make the move
                     var (pieceType, _) = Board.GetPiece(_selectedSquare.Value);
-                    var move = new Move(_selectedSquare.Value, targetSquare.Value, pieceType);
+                    var move = new Move(_selectedSquare.Value, targetSquare.Value, MoveKind.Quiet);
                     
                     System.Diagnostics.Debug.WriteLine($"Created move: {move}");
                     
@@ -423,6 +666,34 @@ public partial class BoardControl : UserControl
         {
             System.Diagnostics.Debug.WriteLine("=== MOVE INDICATOR CLICKED ===");
             
+            // Use NEW engine if available
+            if (GameState != null && ViewModel != null && _selectedSquare.HasValue)
+            {
+                var targetSquare = GetSquareFromElement(sender as FrameworkElement);
+                if (targetSquare.HasValue)
+                {
+                    System.Diagnostics.Debug.WriteLine($"🎯 GREEN DOT CLICKED: {_selectedSquare.Value} -> {targetSquare.Value}");
+                    
+                    bool moveSuccessful = ViewModel.TryMakeMove(_selectedSquare.Value, targetSquare.Value);
+                    
+                    if (moveSuccessful)
+                    {
+                        System.Diagnostics.Debug.WriteLine("✅ MOVE SUCCESSFUL via green dot!");
+                        UpdateBoardFromGameState();
+                        _selectedSquare = null;
+                        _possibleMoves.Clear();
+                        UpdateHighlights();
+                        this.InvalidateVisual();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("❌ MOVE REJECTED via green dot");
+                    }
+                }
+                return;
+            }
+            
+            // Fallback to old system
             if (Board == null || !_selectedSquare.HasValue) 
             {
                 System.Diagnostics.Debug.WriteLine("OnMoveIndicatorMouseDown: Board is null or no selected square");
@@ -1357,3 +1628,4 @@ public class MoveMadeEventArgs : EventArgs
         Move = move;
     }
 }
+

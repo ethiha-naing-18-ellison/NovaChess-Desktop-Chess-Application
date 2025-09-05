@@ -1,60 +1,44 @@
 namespace NovaChess.Core;
 
-public struct Move : IEquatable<Move>
+public sealed class Move : IEquatable<Move>
 {
-    public Square From { get; }
-    public Square To { get; }
-    public PieceType Piece { get; }
-    public PieceType PromotionPiece { get; }
-    public bool IsCapture { get; set; }
-    public bool IsEnPassant { get; set; }
-    public bool IsCastle { get; set; }
-    public bool IsDoublePawnPush { get; set; }
-    public bool IsCheck { get; set; }
-    public bool IsCheckmate { get; set; }
+    public Square From { get; init; }
+    public Square To { get; init; }
+    public MoveKind Kind { get; init; }
+    public PieceType PromotionTo { get; init; } = PieceType.None; // Q/R/B/N when Kind==Promotion
     
-    public Move(Square from, Square to, PieceType piece, PieceType promotionPiece = PieceType.None)
+    // Additional info for move execution and undo
+    public PieceType MovingPiece { get; init; }
+    public Color MovingColor { get; init; }
+    public PieceType CapturedPiece { get; init; } = PieceType.None;
+    
+    public Move() { }
+    
+    public Move(Square from, Square to, MoveKind kind = MoveKind.Quiet)
     {
         From = from;
         To = to;
-        Piece = piece;
-        PromotionPiece = promotionPiece;
-        
-        // These will be set by the move generator
-        IsCapture = false;
-        IsEnPassant = false;
-        IsCastle = false;
-        IsDoublePawnPush = false;
-        IsCheck = false;
-        IsCheckmate = false;
+        Kind = kind;
     }
     
-    public Move WithFlags(bool isCapture, bool isEnPassant, bool isCastle, bool isDoublePawnPush, bool isCheck, bool isCheckmate)
-    {
-        return new Move(From, To, Piece, PromotionPiece)
-        {
-            IsCapture = isCapture,
-            IsEnPassant = isEnPassant,
-            IsCastle = isCastle,
-            IsDoublePawnPush = isDoublePawnPush,
-            IsCheck = isCheck,
-            IsCheckmate = isCheckmate
-        };
-    }
+    public bool IsCapture => Kind == MoveKind.Capture || Kind == MoveKind.EnPassant;
+    public bool IsPromotion => Kind == MoveKind.Promotion;
+    public bool IsCastling => Kind == MoveKind.CastleKingSide || Kind == MoveKind.CastleQueenSide;
+    public bool IsEnPassant => Kind == MoveKind.EnPassant;
     
     public string ToSan()
     {
-        if (IsCastle)
+        if (IsCastling)
         {
-            return To.File == 6 ? "O-O" : "O-O-O";
+            return Kind == MoveKind.CastleKingSide ? "O-O" : "O-O-O";
         }
         
         string move = "";
         
         // Piece letter (except for pawns)
-        if (Piece != PieceType.Pawn)
+        if (MovingPiece != PieceType.Pawn)
         {
-            move += Piece switch
+            move += MovingPiece switch
             {
                 PieceType.Knight => "N",
                 PieceType.Bishop => "B",
@@ -68,7 +52,7 @@ public struct Move : IEquatable<Move>
         // Capture
         if (IsCapture)
         {
-            if (Piece == PieceType.Pawn)
+            if (MovingPiece == PieceType.Pawn)
                 move += From.ToAlgebraic()[0];
             move += "x";
         }
@@ -77,9 +61,9 @@ public struct Move : IEquatable<Move>
         move += To.ToAlgebraic();
         
         // Promotion
-        if (PromotionPiece != PieceType.None)
+        if (IsPromotion)
         {
-            move += "=" + PromotionPiece switch
+            move += "=" + PromotionTo switch
             {
                 PieceType.Queen => "Q",
                 PieceType.Rook => "R",
@@ -88,28 +72,31 @@ public struct Move : IEquatable<Move>
                 _ => ""
             };
         }
-        
-        // Check/Checkmate
-        if (IsCheckmate)
-            move += "#";
-        else if (IsCheck)
-            move += "+";
             
         return move;
     }
     
-    public string ToUci() => $"{From.ToAlgebraic()}{To.ToAlgebraic()}{(PromotionPiece != PieceType.None ? PromotionPiece.ToString().ToLower()[0] : "")}";
+    public string ToUci() => $"{From.ToAlgebraic()}{To.ToAlgebraic()}{(IsPromotion ? PromotionTo.ToString().ToLower()[0] : "")}";
     
-    public static bool operator ==(Move left, Move right) => left.Equals(right);
-    public static bool operator !=(Move left, Move right) => !left.Equals(right);
+    public static bool operator ==(Move? left, Move? right) => 
+        ReferenceEquals(left, right) || (left?.Equals(right) == true);
     
-    public bool Equals(Move other) => 
-        From == other.From && 
-        To == other.To && 
-        Piece == other.Piece && 
-        PromotionPiece == other.PromotionPiece;
+    public static bool operator !=(Move? left, Move? right) => !(left == right);
+    
+    public bool Equals(Move? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
         
+        return From == other.From && 
+               To == other.To && 
+               Kind == other.Kind &&
+               PromotionTo == other.PromotionTo;
+    }
+    
     public override bool Equals(object? obj) => obj is Move other && Equals(other);
-    public override int GetHashCode() => HashCode.Combine(From, To, Piece, PromotionPiece);
+    
+    public override int GetHashCode() => HashCode.Combine(From, To, Kind, PromotionTo);
+    
     public override string ToString() => ToSan();
 }

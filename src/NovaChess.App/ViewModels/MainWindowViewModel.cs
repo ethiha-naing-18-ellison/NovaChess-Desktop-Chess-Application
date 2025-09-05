@@ -37,8 +37,8 @@ public partial class MainWindowViewModel : ObservableObject
         ExitCommand = new RelayCommand(Exit);
         LoadGameCommand = new RelayCommand<RecentGame>(LoadGame);
         
-        // Set initial view
-        NavigateToView("Home");
+        // Set initial view - START WITH CHESS GAME!
+        NavigateToView("Game");
         
         // Load recent games
         LoadRecentGames();

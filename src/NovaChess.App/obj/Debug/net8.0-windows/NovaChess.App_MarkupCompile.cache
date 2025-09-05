@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\src\NovaChess.App\App.xaml
-8-241906962
+917303378
 
-161431188315
+17-79074466
 230-112773164
-Controls\BoardControl.xaml;Views\AnalysisView.xaml;Views\GameView.xaml;Views\HomeView.xaml;Views\MainWindow.xaml;Views\NewGameDialog.xaml;Views\PgnLibraryView.xaml;Views\SettingsView.xaml;
+Controls\BoardControl.xaml;Views\AnalysisView.xaml;Views\ChessGameView.xaml;Views\GameView.xaml;Views\HomeView.xaml;Views\MainWindow.xaml;Views\NewGameDialog.xaml;Views\PgnLibraryView.xaml;Views\SettingsView.xaml;
 
-False
+True
 

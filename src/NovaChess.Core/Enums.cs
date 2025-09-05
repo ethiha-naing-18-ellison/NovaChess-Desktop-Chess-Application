@@ -11,10 +11,27 @@ public enum PieceType
     King = 6
 }
 
+public enum Color
+{
+    White = 0,
+    Black = 1
+}
+
+// Keep PieceColor as alias for backward compatibility
 public enum PieceColor
 {
     White = 0,
     Black = 1
+}
+
+public enum MoveKind
+{
+    Quiet = 0,
+    Capture = 1,
+    CastleKingSide = 2,
+    CastleQueenSide = 3,
+    EnPassant = 4,
+    Promotion = 5
 }
 
 public enum GameResult
