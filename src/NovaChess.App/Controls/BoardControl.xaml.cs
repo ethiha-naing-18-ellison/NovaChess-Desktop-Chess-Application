@@ -162,11 +162,11 @@ public partial class BoardControl : UserControl
     {
         var indicator = new Ellipse
         {
-            Width = 50,
-            Height = 50,
-            Fill = new SolidColorBrush(MediaColor.FromArgb(180, 0, 255, 0)), // More opaque green
+            Width = 20,
+            Height = 20,
+            Fill = new SolidColorBrush(MediaColor.FromArgb(150, 0, 200, 0)), // Smaller, more subtle green
             Stroke = Brushes.DarkGreen,
-            StrokeThickness = 3,
+            StrokeThickness = 1,
             IsHitTestVisible = true, // Make it clickable
             Visibility = Visibility.Hidden, // Hidden by default, shown when piece selected
             Cursor = Cursors.Hand, // Show hand cursor when hovering

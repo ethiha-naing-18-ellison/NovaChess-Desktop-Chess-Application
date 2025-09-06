@@ -4,7 +4,8 @@
         Title="Nova ✦ Chess – Desktop" Height="800" Width="1200"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource DarkBackgroundBrush}"
-        MinHeight="600" MinWidth="800">
+        MinHeight="600" MinWidth="800"
+        Icon="../assets/app-icon.png">
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,8 +19,8 @@
             <StackPanel Margin="20">
                 <!-- App Logo/Title -->
                 <StackPanel Margin="0,0,0,30" HorizontalAlignment="Center">
-                    <TextBlock Text="♔" FontSize="48" HorizontalAlignment="Center" 
-                               Foreground="{StaticResource AccentBrush}"/>
+                    <Image Source="../assets/app-logo.png" Height="80" Width="80" 
+                           HorizontalAlignment="Center" Margin="0,0,0,10"/>
                     <TextBlock Text="Nova Chess" FontSize="20" FontWeight="Bold" 
                                HorizontalAlignment="Center" Margin="0,5,0,0"
                                Foreground="{StaticResource LightTextBrush}"/>

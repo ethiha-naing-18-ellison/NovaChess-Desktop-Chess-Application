@@ -30,4 +30,9 @@
     <Resource Include="assets\**\*" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <ApplicationIcon>assets\app-icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+
 </Project>
