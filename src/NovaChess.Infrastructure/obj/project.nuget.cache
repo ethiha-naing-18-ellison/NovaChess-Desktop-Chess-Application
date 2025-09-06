@@ -1,13 +1,17 @@
 {
   "version": 2,
-  "dgSpecHash": "CMIgGuc/JIw=",
+  "dgSpecHash": "14HVKisROb4=",
   "success": true,
   "projectFilePath": "C:\\xampp\\htdocs\\NovaChess-Desktop-Chess-Application-1\\src\\NovaChess.Infrastructure\\NovaChess.Infrastructure.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\TUF\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.18\\microsoft.net.illink.tasks.8.0.18.nupkg.sha512",
     "C:\\Users\\TUF\\.nuget\\packages\\serilog\\3.1.1\\serilog.3.1.1.nupkg.sha512",
     "C:\\Users\\TUF\\.nuget\\packages\\serilog.sinks.file\\5.0.0\\serilog.sinks.file.5.0.0.nupkg.sha512",
     "C:\\Users\\TUF\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
-    "C:\\Users\\TUF\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512"
+    "C:\\Users\\TUF\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512",
+    "C:\\Users\\TUF\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.18\\microsoft.netcore.app.runtime.win-x64.8.0.18.nupkg.sha512",
+    "C:\\Users\\TUF\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.18\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.18.nupkg.sha512",
+    "C:\\Users\\TUF\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.18\\microsoft.aspnetcore.app.runtime.win-x64.8.0.18.nupkg.sha512"
   ],
   "logs": []
 }

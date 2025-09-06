@@ -10,7 +10,7 @@ namespace NovaChess.App.ViewModels;
 public partial class HomeViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _welcomeMessage = "Welcome to Nova Chess - Desktop";
+    private string _welcomeMessage = "Welcome to Nova Chess - Tech-Noble";
     
     [ObservableProperty]
     private string _subtitle = "Your premium chess experience";

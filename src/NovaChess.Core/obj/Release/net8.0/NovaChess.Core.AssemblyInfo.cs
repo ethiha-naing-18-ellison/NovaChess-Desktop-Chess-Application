@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NovaChess.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c936dc8b674403bc89263be8c04f1bb49b21be62")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b86fcd8b0f40f147989a1d85a842ac52e6f8ad4")]
 [assembly: System.Reflection.AssemblyProductAttribute("NovaChess.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NovaChess.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

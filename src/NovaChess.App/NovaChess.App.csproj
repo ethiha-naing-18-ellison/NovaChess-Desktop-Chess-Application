@@ -7,10 +7,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-    <AssemblyTitle>Nova Chess - Desktop</AssemblyTitle>
+    <AssemblyTitle>Nova Chess - Tech-Noble</AssemblyTitle>
     <AssemblyDescription>A production-ready Windows desktop Chess application</AssemblyDescription>
     <AssemblyCompany>Nova Chess</AssemblyCompany>
-    <AssemblyProduct>Nova Chess Desktop</AssemblyProduct>
+    <AssemblyProduct>Nova Chess Tech-Noble</AssemblyProduct>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>

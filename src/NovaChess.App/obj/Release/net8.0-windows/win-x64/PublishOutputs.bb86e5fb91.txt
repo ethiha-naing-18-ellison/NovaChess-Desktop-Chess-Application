@@ -1,0 +1,4 @@
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\NovaChess-TechNoble\NovaChess.App.pdb
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\NovaChess-TechNoble\NovaChess.Core.pdb
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\NovaChess-TechNoble\NovaChess.Infrastructure.pdb
+C:\xampp\htdocs\NovaChess-Desktop-Chess-Application-1\NovaChess-TechNoble\NovaChess.App.exe

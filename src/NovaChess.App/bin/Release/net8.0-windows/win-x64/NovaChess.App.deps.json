@@ -12,6 +12,7 @@
           "CommunityToolkit.Mvvm": "8.2.2",
           "Microsoft.Extensions.DependencyInjection": "8.0.0",
           "Microsoft.Extensions.Hosting": "8.0.0",
+          "Microsoft.NET.ILLink.Tasks": "8.0.18",
           "NovaChess.Core": "1.0.0",
           "NovaChess.Infrastructure": "1.0.0",
           "runtimepack.Microsoft.NETCore.App.Runtime.win-x64": "8.0.18",
@@ -1337,6 +1338,7 @@
           }
         }
       },
+      "Microsoft.NET.ILLink.Tasks/8.0.18": {},
       "Serilog/3.1.1": {
         "runtime": {
           "lib/net7.0/Serilog.dll": {
@@ -1601,6 +1603,13 @@
       "sha512": "sha512-bXJEZrW9ny8vjMF1JV253WeLhpEVzFo1lyaZu1vQ4ZxWUlVvknZ/+ftFgVheLubb4eZPSwwxBeqS1JkCOjxd8g==",
       "path": "microsoft.extensions.primitives/8.0.0",
       "hashPath": "microsoft.extensions.primitives.8.0.0.nupkg.sha512"
+    },
+    "Microsoft.NET.ILLink.Tasks/8.0.18": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OiXqr2YIBEV9dsAWEtasK470ALyJ0VxJ9k4MotOxlWV6HeEgrJKYMW4HHj1OCCXvqE0/A25wEKPkpfiBARgDZA==",
+      "path": "microsoft.net.illink.tasks/8.0.18",
+      "hashPath": "microsoft.net.illink.tasks.8.0.18.nupkg.sha512"
     },
     "Serilog/3.1.1": {
       "type": "package",

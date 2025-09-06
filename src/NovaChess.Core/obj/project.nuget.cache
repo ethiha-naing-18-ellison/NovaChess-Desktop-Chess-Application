@@ -1,11 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "dPPe9z7NFVY=",
+  "dgSpecHash": "jctL/xlW4r0=",
   "success": true,
   "projectFilePath": "C:\\xampp\\htdocs\\NovaChess-Desktop-Chess-Application-1\\src\\NovaChess.Core\\NovaChess.Core.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\TUF\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.18\\microsoft.net.illink.tasks.8.0.18.nupkg.sha512",
     "C:\\Users\\TUF\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
-    "C:\\Users\\TUF\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512"
+    "C:\\Users\\TUF\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512",
+    "C:\\Users\\TUF\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.18\\microsoft.netcore.app.runtime.win-x64.8.0.18.nupkg.sha512",
+    "C:\\Users\\TUF\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.18\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.18.nupkg.sha512",
+    "C:\\Users\\TUF\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.18\\microsoft.aspnetcore.app.runtime.win-x64.8.0.18.nupkg.sha512"
   ],
   "logs": [
     {
@@ -17,7 +21,8 @@
       "filePath": "C:\\xampp\\htdocs\\NovaChess-Desktop-Chess-Application-1\\src\\NovaChess.Core\\NovaChess.Core.csproj",
       "libraryId": "System.Text.Json",
       "targetGraphs": [
-        "net8.0"
+        "net8.0",
+        "net8.0/win-x64"
       ]
     },
     {
@@ -29,7 +34,8 @@
       "filePath": "C:\\xampp\\htdocs\\NovaChess-Desktop-Chess-Application-1\\src\\NovaChess.Core\\NovaChess.Core.csproj",
       "libraryId": "System.Text.Json",
       "targetGraphs": [
-        "net8.0"
+        "net8.0",
+        "net8.0/win-x64"
       ]
     }
   ]

@@ -106,7 +106,7 @@
         
         <!-- Footer with additional info -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-            <TextBlock Text="Nova Chess - Desktop" 
+            <TextBlock Text="Nova Chess - Tech-Noble" 
                        Foreground="{StaticResource LightTextBrush}" 
                        FontSize="12" Opacity="0.7"/>
         </StackPanel>
