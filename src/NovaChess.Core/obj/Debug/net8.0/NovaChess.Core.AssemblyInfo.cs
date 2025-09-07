@@ -11,9 +11,9 @@ using System;
 using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("NovaChess.Core")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d4dd130538fda95afffa64bc0746997b9bc71b1d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b9eaa936d58f2ff6057951fabf90656dccd1bf80")]
 [assembly: System.Reflection.AssemblyProductAttribute("NovaChess.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NovaChess.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
